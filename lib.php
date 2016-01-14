@@ -84,7 +84,8 @@ class Git
 
     public static function push($remoteBranch)
     {
-        return Shell::exec('git push -u origin %s', [$remoteBranch]);
+        return 'Stubbed push to ' . $remoteBranch;
+        //return Shell::exec('git push -u origin %s', [$remoteBranch]);
     }
 }
 
