@@ -4,7 +4,16 @@ class Shell
 {
     public static function exec($cmd, $args = [])
     {
-        return shell_exec(vsprintf($cmd, $args));
+        exec(vsprintf($cmd, $args), $output, $return);
+
+        var_dump($return);
+        exit;
+
+        if ($return) {
+            return implode("\n", $output);
+        }
+
+        die($return);
     }
 
     public static function out($string, $args = [])

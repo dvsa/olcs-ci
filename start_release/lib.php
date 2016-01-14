@@ -29,9 +29,11 @@ class Command
     {
         Shell::out('Running job for %s repo', [$this->repo->getName()]);
 
+        // Clone the repo
         $this->cloneRepo();
         chdir($this->repo->getName());
 
+        // Check if the repo already has a release branch. We need to exit if so.
         $this->checkForReleaseBranch();
     }
 
@@ -48,7 +50,7 @@ class Command
 
         if (!empty($result)) {
             Shell::out('Release branch already exists');
-            die(1);
+            exit(1);
         }
     }
 }
