@@ -18,9 +18,9 @@ class Git
     public static function cloneRepo($repo, $branch = 'develop', $shallow = true)
     {
         if ($shallow) {
-            return Shell::exec('git clone -b %s --single-branch --depth 1 %s', [$branch, $repo]);
+            return Shell::exec('git clone -b %s --depth 1 %s', [$branch, $repo]);
         }
 
-        return Shell::exec('git clone -b %s --single-branch %s', [$branch, $repo]);
+        return Shell::exec('git clone -b %s %s', [$branch, $repo]);
     }
 }
