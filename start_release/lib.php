@@ -117,7 +117,7 @@ class Validate
         Shell::out('Updating composer');
 
         if (file_exists('composer.phar') == false) {
-            Shell::out(Shell::exec('wget https://getcomposer.org/composer.phar'));
+            copy('../composer.phar', './composer.phar');
         }
 
         Shell::out(Shell::exec('php composer.phar update --no-interaction'));
