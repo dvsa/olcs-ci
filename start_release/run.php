@@ -5,6 +5,11 @@
  *
  * Decided to use PHP to allow more of our developers to understand and contribute
  */
+
+include(__DIR__ . '/../lib.php');
+
+$version = $_SERVER['VERSION'];
+
 $moduleRepos = [
     'olcs-common',
     'olcs-static',
@@ -15,30 +20,20 @@ $moduleRepos = [
     'olcs-auth',
     'olcs-oa'
 ];
-var_dump($GLOBALS);
-//
-//#$VERSION=2.X
-//APP_REPOS="olcs-selfserve olcs-internal olcs-backend olcs-scanning"
-//DEV_REPOS="olcs-etl"
-//
-//function shallowClone {
-//    git shallow
-//}
-//
-//# For each module repo
-//for REPO in $MODULE_REPOS
-//do
-//    echo $REPO
-//done
-//
-//# For each app repo
-//for REPO in $APP_REPOS
-//do
-//    echo $REPO
-//done
-//
-//# For each dev repo
-//for REPO in $DEV_REPOS
-//do
-//    echo $REPO
-//done
+
+$appRepos = [
+    'olcs-selfserve',
+    'olcs-internal',
+    'olcs-backend',
+    'olcs-scanning'
+];
+
+$devRepos = ['olcs-etl'];
+
+$repoTemplate = 'git@gitlab.inf.mgt.mtpdvsa:olcs/%s.git';
+
+foreach ($moduleRepos as $repo) {
+    Shell::out(
+        Git::cloneRepo(sprintf($repoTemplate, $repo))
+    );
+}
