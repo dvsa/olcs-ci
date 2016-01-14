@@ -9,27 +9,35 @@ class Shell
 
     public static function out($string, $args = [])
     {
-        echo vsprintf($string . "\n", $args);
+        echo vsprintf('<--- ' . $string . " --->\n", $args);
     }
 }
 
 class Repo
 {
-    public $name;
+    private $name;
 
-    public function __construct($name)
+    private $repoTemplate;
+
+    public function __construct($name, $template)
     {
         $this->name = $name;
+        $this->repoTemplate = $template;
     }
 
-    public static function create($name)
+    public static function create($name, $template)
     {
-        return new self($name);
+        return new self($name, $template);
     }
 
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getRepo()
+    {
+        return sprintf($this->repoTemplate, $this->name);
     }
 }
 
@@ -38,9 +46,9 @@ class Git
     public static function cloneRepo(Repo $repo, $branch = 'develop', $shallow = true)
     {
         if ($shallow) {
-            return Shell::exec('git clone -b %s --depth 1 %s', [$branch, $repo->getName()]);
+            return Shell::exec('git clone -b %s --depth 1 %s', [$branch, $repo->getRepo()]);
         }
 
-        return Shell::exec('git clone -b %s %s', [$branch, $repo->getName()]);
+        return Shell::exec('git clone -b %s %s', [$branch, $repo->getRepo()]);
     }
 }

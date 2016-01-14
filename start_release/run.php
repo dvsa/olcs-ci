@@ -15,19 +15,19 @@ $version = $_SERVER['VERSION'];
 $repoTemplate = 'git@gitlab.inf.mgt.mtpdvsa:olcs/%s.git';
 
 $repos = [
-    ModuleRepo::create(sprintf($repoTemplate, 'olcs-common')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-static')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-transfer')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-utils')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-config')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-elasticsearch')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-auth')),
-//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-oa')),
-//    AppRepo::create(sprintf($repoTemplate, 'olcs-selfserve')),
-//    AppRepo::create(sprintf($repoTemplate, 'olcs-internal')),
-//    AppRepo::create(sprintf($repoTemplate, 'olcs-backend')),
-//    AppRepo::create(sprintf($repoTemplate, 'olcs-scanning')),
-//    DevRepo::create(sprintf($repoTemplate, 'olcs-etl'))
+    ModuleRepo::create('olcs-common', $repoTemplate),
+//    ModuleRepo::create('olcs-static', $repoTemplate),
+//    ModuleRepo::create('olcs-transfer', $repoTemplate),
+//    ModuleRepo::create('olcs-utils', $repoTemplate),
+//    ModuleRepo::create('olcs-config', $repoTemplate),
+//    ModuleRepo::create('olcs-elasticsearch', $repoTemplate),
+//    ModuleRepo::create('olcs-auth', $repoTemplate),
+//    ModuleRepo::create('olcs-oa', $repoTemplate),
+//    AppRepo::create('olcs-selfserve', $repoTemplate),
+//    AppRepo::create('olcs-internal', $repoTemplate),
+//    AppRepo::create('olcs-backend', $repoTemplate),
+//    AppRepo::create('olcs-scanning', $repoTemplate),
+//    DevRepo::create('olcs-etl', $repoTemplate)
 ];
 
 foreach ($repos as $repo) {

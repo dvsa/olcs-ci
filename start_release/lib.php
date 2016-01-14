@@ -13,7 +13,7 @@ class Command
 {
     public function run(\Repo $repo, $version)
     {
-        Shell::out('<--- Running job for %s repo --->', [$repo->getName()]);
+        Shell::out('Running job for %s repo', [$repo->getName()]);
 
         $this->cloneRepo($repo);
         Shell::out(Shell::exec('pwd'));
@@ -23,7 +23,7 @@ class Command
 
     protected function cloneRepo($repo)
     {
-        Shell::out('<--- Cloning repo --->');
+        Shell::out('Cloning repo');
         Shell::out(
             Git::cloneRepo($repo)
         );
