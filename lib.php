@@ -4,10 +4,12 @@ class Shell
 {
     public static function exec($cmd, $args = [], $exitOnError = true)
     {
-        exec(vsprintf($cmd, $args), $output, $return);
+        $command = vsprintf($cmd, $args);
+
+        exec($command, $output, $return);
 
         if ($return != 0 && $exitOnError) {
-            self::out('Command failed: "%s" Failed with code %s' . "\n" . '%s', [$cmd, $return, implode("\n", $output)]);
+            self::out('Command failed: "%s" Failed with code %s' . "\n" . '%s', [$command, $return, implode("\n", $output)]);
             exit($return);
         }
 
