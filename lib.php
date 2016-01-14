@@ -58,3 +58,11 @@ class Git
         return Shell::exec('git clone -b %s %s', [$branch, $repo->getRepo()]);
     }
 }
+
+class GitFlow
+{
+    public static function releaseStart($version)
+    {
+        return Shell::exec('git checkout -b release/%s', [$version]);
+    }
+}

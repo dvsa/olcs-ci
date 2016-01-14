@@ -4,6 +4,7 @@ namespace StartRelease;
 
 use Repo;
 use Git;
+use GitFlow;
 use Shell;
 
 class ModuleRepo extends Repo {}
@@ -69,9 +70,7 @@ class Validate
     protected function createNewReleaseBranch()
     {
         Shell::out('Creating local release branch');
-        Shell::out(
-            Shell::exec('git flow release start %s', [$this->version])
-        );
+        Shell::out(GitFlow::releaseStart($this->version));
     }
 
     protected function updateComposerJson()
