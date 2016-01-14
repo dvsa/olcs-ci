@@ -9,7 +9,8 @@ class Shell
         exec($command, $output, $return);
 
         if ($return != 0 && $exitOnError) {
-            self::out('Command failed: "%s" Failed with code %s' . "\n" . '%s', [$command, $return, implode("\n", $output)]);
+            self::out('Command failed: %s', [$command]);
+            self::out(implode("\n", $output));
             exit($return);
         }
 
@@ -59,6 +60,31 @@ class Git
         }
 
         return Shell::exec('git clone -b %s %s', [$branch, $repo->getRepo()]);
+    }
+
+    public static function add(array $files = [])
+    {
+        $output = [];
+        foreach ($files as $file) {
+            $output[] = Shell::exec('git add -f %s', [$file]);
+        }
+
+        return implode("\n", $output);
+    }
+
+    public static function commit($message, $args)
+    {
+        return Shell::exec('git commit -m "%s"', [vsprintf($message, $args)]);
+    }
+
+    public static function checkout($branch)
+    {
+        return Shell::exec('git checkout %s', [$branch]);
+    }
+
+    public static function push($remoteBranch)
+    {
+        return Shell::exec('git push -u origin %s', [$remoteBranch]);
     }
 }
 

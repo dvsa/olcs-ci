@@ -36,26 +36,31 @@ class Validate
 
         $this->checkForReleaseBranch();
 
-        $this->createNewReleaseBranch();
-
         if ($this->repo instanceof AppRepo) {
-            $this->updateComposerJson();
+            $this->updateVersionNumber();
         }
 
-        $this->updateComposer();
+        $this->createNewReleaseBranch();
 
-        $this->runUnitTests();
+        // For app repos, we need to update composer json versions, update composer to generate a lock file, and check
+        // the unit tests run
+        if ($this->repo instanceof AppRepo) {
+            $this->updateComposerJson();
+            $this->updateComposer();
+            $this->runUnitTests();
+            $this->commitComposerLock();
+        }
 
         chdir('..');
     }
 
-    protected function cloneRepo()
+    private function cloneRepo()
     {
         Shell::out('Cloning repo');
         Shell::out(Git::cloneRepo($this->repo));
     }
 
-    protected function checkForReleaseBranch()
+    private function checkForReleaseBranch()
     {
         Shell::out('Checking for existing release branch');
         $result = Shell::exec('git branch -a | grep remotes/origin/release', [], false);
@@ -68,13 +73,27 @@ class Validate
         Shell::out('Release branch not found!');
     }
 
-    protected function createNewReleaseBranch()
+    private function updateVersionNumber()
+    {
+        Shell::out('Updating application version number');
+
+        if (file_exists('config/version')) {
+            file_put_contents('config/version', $this->version);
+
+            Shell::out('Committing version number file');
+
+            Shell::out(Git::add(['config/version']));
+            Shell::out(Git::commit('Increased version number %s', [$this->version]));
+        }
+    }
+
+    private function createNewReleaseBranch()
     {
         Shell::out('Creating local release branch');
         Shell::out(GitFlow::releaseStart($this->version));
     }
 
-    protected function updateComposerJson()
+    private function updateComposerJson()
     {
         Shell::out('Updating composer JSON');
 
@@ -93,7 +112,7 @@ class Validate
         file_put_contents('composer.json', $composerJson);
     }
 
-    protected function updateComposer()
+    private function updateComposer()
     {
         Shell::out('Updating composer');
 
@@ -104,7 +123,7 @@ class Validate
         Shell::out(Shell::exec('php composer.phar update --no-interaction'));
     }
 
-    protected function runUnitTests()
+    private function runUnitTests()
     {
         if (file_exists('test')) {
             Shell::out('Running unit tests');
@@ -112,6 +131,14 @@ class Validate
         } else {
             Shell::out('WARNING: No unit tests found');
         }
+    }
+
+    private function commitComposerLock()
+    {
+        Shell::out('Committing release files');
+
+        Shell::out(Git::add(['composer.lock']));
+        Shell::out(Git::commit('Composer lock %s', [$this->version]));
     }
 }
 
@@ -136,8 +163,20 @@ class Command
 
         chdir($this->repo->getName());
 
-
+        $this->pushToOrigin();
 
         chdir('..');
+    }
+
+    private function pushToOrigin()
+    {
+        Shell::out('Pushing release branch to origin');
+
+        Shell::out(Git::push('release/' . $this->version));
+
+        Shell::out('Pushing develop branch to origin');
+
+        Shell::out(Git::checkout('develop'));
+        Shell::out(Git::push('develop'));
     }
 }
