@@ -7,6 +7,7 @@ class Shell
         exec(vsprintf($cmd, $args), $output, $return);
 
         if ($return != 0 && $exitOnError) {
+            self::out('Command failed: "%s" Failed with code %s', [$cmd, $return]);
             exit($return);
         }
 
