@@ -40,8 +40,9 @@ class Validate
 
         if ($this->repo instanceof AppRepo) {
             $this->updateComposerJson();
-            $this->updateComposer();
         }
+
+        $this->updateComposer();
 
         $this->runUnitTests();
 
