@@ -15,7 +15,7 @@ $moduleRepos = [
     'olcs-auth',
     'olcs-oa'
 ];
-var_dump($_ENV);
+var_dump($GLOBALS);
 //
 //#$VERSION=2.X
 //APP_REPOS="olcs-selfserve olcs-internal olcs-backend olcs-scanning"
