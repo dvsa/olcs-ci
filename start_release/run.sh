@@ -9,17 +9,17 @@ echo $VERSION
 # For each module repo
 for REPO in $MODULE_REPOS
 do
-    echo REPO
+    echo $REPO
 done
 
 # For each app repo
 for REPO in $APP_REPOS
 do
-    echo REPO
+    echo $REPO
 done
 
 # For each app repo
 for REPO in $DEV_REPOS
 do
-    echo REPO
+    echo $REPO
 done
