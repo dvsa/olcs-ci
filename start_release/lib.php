@@ -116,11 +116,7 @@ class Validate
     {
         Shell::out('Updating composer');
 
-        if (file_exists('composer.phar') == false) {
-            copy('../composer.phar', './composer.phar');
-        }
-
-        Shell::out(Shell::exec('php composer.phar update --no-interaction'));
+        Shell::out(Shell::exec('php ../composer.phar update --no-interaction'));
     }
 
     private function runUnitTests()
