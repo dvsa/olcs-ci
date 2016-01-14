@@ -28,6 +28,4 @@ class Command
             Git::cloneRepo($repo)
         );
     }
-
-    protected function
 }
