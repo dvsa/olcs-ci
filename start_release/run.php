@@ -6,34 +6,31 @@
  * Decided to use PHP to allow more of our developers to understand and contribute
  */
 
+namespace StartRelease;
+
 include(__DIR__ . '/../lib.php');
+include(__DIR__ . '/lib.php');
 
 $version = $_SERVER['VERSION'];
-
-$moduleRepos = [
-    'olcs-common',
-    'olcs-static',
-    'olcs-transfer',
-    'olcs-utils',
-    'olcs-config',
-    'olcs-elasticsearch',
-    'olcs-auth',
-    'olcs-oa'
-];
-
-$appRepos = [
-    'olcs-selfserve',
-    'olcs-internal',
-    'olcs-backend',
-    'olcs-scanning'
-];
-
-$devRepos = ['olcs-etl'];
-
 $repoTemplate = 'git@gitlab.inf.mgt.mtpdvsa:olcs/%s.git';
 
-foreach ($moduleRepos as $repo) {
-    Shell::out(
-        Git::cloneRepo(sprintf($repoTemplate, $repo))
-    );
+$repos = [
+    ModuleRepo::create(sprintf($repoTemplate, 'olcs-common')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-static')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-transfer')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-utils')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-config')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-elasticsearch')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-auth')),
+//    ModuleRepo::create(sprintf($repoTemplate, 'olcs-oa')),
+//    AppRepo::create(sprintf($repoTemplate, 'olcs-selfserve')),
+//    AppRepo::create(sprintf($repoTemplate, 'olcs-internal')),
+//    AppRepo::create(sprintf($repoTemplate, 'olcs-backend')),
+//    AppRepo::create(sprintf($repoTemplate, 'olcs-scanning')),
+//    DevRepo::create(sprintf($repoTemplate, 'olcs-etl'))
+];
+
+foreach ($repos as $repo) {
+    $command = new Command();
+    $command->run($repo, $version);
 }
