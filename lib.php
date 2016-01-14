@@ -11,6 +11,8 @@ class Shell
             return implode("\n", $output);
         }
 
+        self::out('Exec: %s failed with code %s', [$cmd, $return]);
+
         exit($return);
     }
 
