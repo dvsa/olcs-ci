@@ -106,14 +106,8 @@ class Validate
     protected function runUnitTests()
     {
         if (file_exists('test')) {
-
             Shell::out('Running unit tests');
-
-            chdir('test');
-
-            Shell::out(Shell::exec('php ../vendor/bin/phpunit'));
-
-            chdir('..');
+            Shell::out(Shell::exec('php vendor/bin/phpunit -c test'));
         } else {
             Shell::out('WARNING: No unit tests found');
         }
