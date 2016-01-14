@@ -46,10 +46,7 @@ class Command
     protected function checkForReleaseBranch()
     {
         Shell::out('Checking for existing release branch');
-        $result = Shell::exec('git branch -a | grep remotes/origin/release');
-
-        var_dump($result);
-        exit;
+        $result = Shell::exec('git branch -a | grep remotes/origin/release', [], false);
 
         if (!empty($result)) {
             Shell::out('Release branch already exists');

@@ -2,18 +2,15 @@
 
 class Shell
 {
-    public static function exec($cmd, $args = [])
+    public static function exec($cmd, $args = [], $exitOnError = true)
     {
         exec(vsprintf($cmd, $args), $output, $return);
 
-        // Success
-        if ($return == 0) {
-            return implode("\n", $output);
+        if ($return != 0 && $exitOnError) {
+            exit($return);
         }
 
-        self::out('Exec: %s failed with code %s', [$cmd, $return]);
-
-        exit($return);
+        return implode("\n", $output);
     }
 
     public static function out($string, $args = [])
