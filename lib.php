@@ -6,14 +6,12 @@ class Shell
     {
         exec(vsprintf($cmd, $args), $output, $return);
 
-        var_dump($return);
-        exit;
-
-        if ($return) {
+        // Success
+        if ($return == 0) {
             return implode("\n", $output);
         }
 
-        die($return);
+        exit($return);
     }
 
     public static function out($string, $args = [])
