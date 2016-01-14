@@ -30,6 +30,13 @@ $repos = [
 //    DevRepo::create('olcs-etl', $repoTemplate)
 ];
 
+// Validate all repos before processing
+foreach ($repos as $repo) {
+    $command = new Validate($repo, $version);
+    $command->run();
+}
+
+// If we have passed validation, process each repo
 foreach ($repos as $repo) {
     $command = new Command($repo, $version);
     $command->run();
