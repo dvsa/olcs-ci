@@ -37,7 +37,7 @@ class Repo
 
     public static function create($name, $template)
     {
-        return new self($name, $template);
+        return new static($name, $template);
     }
 
     public function getName()
