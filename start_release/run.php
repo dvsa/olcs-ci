@@ -31,6 +31,6 @@ $repos = [
 ];
 
 foreach ($repos as $repo) {
-    $command = new Command();
-    $command->run($repo, $version);
+    $command = new Command($repo, $version);
+    $command->run();
 }

@@ -2,30 +2,48 @@
 
 namespace StartRelease;
 
-class ModuleRepo extends \Repo {}
-class DevRepo extends \Repo {}
-class AppRepo extends \Repo {}
-
+use Repo;
 use Git;
 use Shell;
 
+class ModuleRepo extends Repo {}
+class DevRepo extends Repo {}
+class AppRepo extends Repo {}
+
 class Command
 {
-    public function run(\Repo $repo, $version)
-    {
-        Shell::out('Running job for %s repo', [$repo->getName()]);
+    /**
+     * @var Repo
+     */
+    private $repo;
 
-        $this->cloneRepo($repo);
-        Shell::out(Shell::exec('pwd'));
-        chdir($repo->getName());
-        Shell::out(Shell::exec('pwd'));
+    private $version;
+
+    public function __construct(Repo $repo, $version)
+    {
+        $this->repo = $repo;
+        $this->version = $version;
     }
 
-    protected function cloneRepo($repo)
+    public function run()
+    {
+        Shell::out('Running job for %s repo', [$this->repo->getName()]);
+
+        $this->cloneRepo();
+        chdir($this->repo->getName());
+
+        $this->checkForReleaseBranch();
+    }
+
+    protected function cloneRepo()
     {
         Shell::out('Cloning repo');
-        Shell::out(
-            Git::cloneRepo($repo)
-        );
+        Shell::out(Git::cloneRepo($this->repo));
+    }
+
+    protected function checkForReleaseBranch()
+    {
+        Shell::out('Checking for existing release branch');
+        Shell::out(Shell::exec('git branch -a | grep release'));
     }
 }
