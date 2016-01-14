@@ -4,6 +4,8 @@ MODULE_REPOS="olcs-common olcs-static olcs-transfer olcs-utils olcs-config olcs-
 APP_REPOS="olcs-selfserve olcs-internal olcs-backend olcs-scanning"
 DEV_REPOS="olcs-etl"
 
+echo $VERSION
+
 # For each module repo
 for REPO in $MODULE_REPOS
 do
