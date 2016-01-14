@@ -6,6 +6,8 @@ DEV_REPOS="olcs-etl"
 
 echo $VERSION
 
+git flow --help
+
 # For each module repo
 for REPO in $MODULE_REPOS
 do
