@@ -36,7 +36,7 @@ class Validate
 
         $this->checkForReleaseBranch();
 
-        if ($this->repo instanceof AppRepo) {
+        if ($this->repo instanceof AppRepo || $this->repo instanceof DevRepo) {
             $this->updateVersionNumber();
         }
 
@@ -76,16 +76,18 @@ class Validate
     private function updateVersionNumber()
     {
         Shell::out('Updating application version number');
+        $version = $this->version .'rc';
 
         if (file_exists('config/version')) {
-            $version = $this->version .'rc';
             file_put_contents('config/version', $version);
-
-            Shell::out('Committing version number file');
-
             Shell::out(Git::add(['config/version']));
-            Shell::out(Git::commit('Increased version number %s', [$version]));
+        } else {
+            file_put_contents('version', $version);
+            Shell::out(Git::add(['version']));
         }
+
+        Shell::out('Committing version number file');
+        Shell::out(Git::commit('Increased version number %s', [$version]));
     }
 
     private function createNewReleaseBranch()
