@@ -78,12 +78,13 @@ class Validate
         Shell::out('Updating application version number');
 
         if (file_exists('config/version')) {
-            file_put_contents('config/version', $this->version);
+            $version = $this->version .'rc';
+            file_put_contents('config/version', $version);
 
             Shell::out('Committing version number file');
 
             Shell::out(Git::add(['config/version']));
-            Shell::out(Git::commit('Increased version number %s', [$this->version]));
+            Shell::out(Git::commit('Increased version number %s', [$version]));
         }
     }
 
@@ -131,10 +132,11 @@ class Validate
 
     private function commitComposerLock()
     {
-        Shell::out('Committing release files');
+        Shell::out('Committing Composer files');
 
         Shell::out(Git::add(['composer.lock']));
-        Shell::out(Git::commit('Composer lock %s', [$this->version]));
+        Shell::out(Git::add(['composer.json']));
+        Shell::out(Git::commit('Composer %s', [$this->version]));
     }
 }
 
@@ -170,9 +172,9 @@ class Command
 
         Shell::out(Git::push('release/' . $this->version));
 
-        Shell::out('Pushing develop branch to origin');
+        //Shell::out('Pushing develop branch to origin');
 
-        Shell::out(Git::checkout('develop'));
-        Shell::out(Git::push('develop'));
+        //Shell::out(Git::checkout('develop'));
+        //Shell::out(Git::push('develop'));
     }
 }

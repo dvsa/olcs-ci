@@ -23,10 +23,12 @@ $repos = [
     ModuleRepo::create('olcs-elasticsearch', $repoTemplate),
     ModuleRepo::create('olcs-auth', $repoTemplate),
     ModuleRepo::create('olcs-oa', $repoTemplate),
+
     AppRepo::create('olcs-selfserve', $repoTemplate),
     AppRepo::create('olcs-internal', $repoTemplate),
     AppRepo::create('olcs-backend', $repoTemplate),
     AppRepo::create('olcs-scanning', $repoTemplate),
+
     DevRepo::create('olcs-etl', $repoTemplate)
 ];
 
