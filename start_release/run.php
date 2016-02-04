@@ -19,6 +19,7 @@ $repos = [
     ModuleRepo::create('olcs-transfer', $repoTemplate),
     ModuleRepo::create('olcs-utils', $repoTemplate),
     ModuleRepo::create('olcs-auth', $repoTemplate),
+    ModuleRepo::create('olcs-logging', $repoTemplate),
 
     ModuleRepo::create('olcs-config', $repoTemplate),
 
