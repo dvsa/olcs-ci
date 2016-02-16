@@ -47,8 +47,8 @@ class Command
             $this->commitComposerLock();
         }
 
+        $this->pushToOrigin();
         chdir('..');
-//        $this->pushToOrigin();
     }
 
     private function pushToOrigin()
