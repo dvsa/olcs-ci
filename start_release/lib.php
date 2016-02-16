@@ -7,11 +7,7 @@ use Git;
 use GitFlow;
 use Shell;
 
-class ModuleRepo extends Repo {}
-class DevRepo extends Repo {}
-class AppRepo extends Repo {}
-
-class Validate
+class Command
 {
     /**
      * @var Repo
@@ -34,9 +30,9 @@ class Validate
 
         chdir($this->repo->getName());
 
-        $this->checkForReleaseBranch();
+//        $this->checkForReleaseBranch();
 
-        if ($this->repo instanceof AppRepo || $this->repo instanceof DevRepo) {
+        if ($this->repo instanceof \AppRepo || $this->repo instanceof \DevRepo) {
             $this->updateVersionNumber();
         }
 
@@ -44,7 +40,7 @@ class Validate
 
         // For app repos, we need to update composer json versions, update composer to generate a lock file, and check
         // the unit tests run
-        if ($this->repo instanceof AppRepo) {
+        if ($this->repo instanceof \AppRepo) {
             $this->updateComposerJson();
             $this->updateComposer();
             $this->runUnitTests();
@@ -52,6 +48,19 @@ class Validate
         }
 
         chdir('..');
+//        $this->pushToOrigin();
+    }
+
+    private function pushToOrigin()
+    {
+        Shell::out('Pushing release branch to origin');
+
+        Shell::out(Git::push('release/' . $this->version));
+
+        //Shell::out('Pushing develop branch to origin');
+
+        //Shell::out(Git::checkout('develop'));
+        //Shell::out(Git::push('develop'));
     }
 
     private function cloneRepo()
@@ -103,11 +112,11 @@ class Validate
         $composerJson = file_get_contents('composer.json');
 
         $replacements = [
-            '"olcs\/OlcsCommon": "dev-develop"' => '"olcs\/OlcsCommon": "dev-release/' . $this->version . '"',
-            '"olcs\/olcs-transfer": "dev-develop"' => '"olcs\/olcs-transfer": "dev-release/' . $this->version . '"',
-            '"olcs\/olcs-utils": "dev-develop"' => '"olcs\/olcs-utils": "dev-release/' . $this->version . '"',
-            '"olcs\/olcs-auth": "dev-develop"' => '"olcs\/olcs-auth": "dev-release/' . $this->version . '"',
-            '"olcs\/olcs-document-share": "dev-develop"' => '"olcs\/olcs-document-share": "dev-release/' . $this->version . '"',
+            '"olcs/OlcsCommon": "dev-develop"' => '"olcs/OlcsCommon": "dev-release/' . $this->version . '"',
+            '"olcs/olcs-transfer": "dev-develop"' => '"olcs/olcs-transfer": "dev-release/' . $this->version . '"',
+            '"olcs/olcs-utils": "dev-develop"' => '"olcs/olcs-utils": "dev-release/' . $this->version . '"',
+            '"olcs/olcs-auth": "dev-develop"' => '"olcs/olcs-auth": "dev-release/' . $this->version . '"',
+            '"olcs/olcs-document-share": "dev-develop"' => '"olcs/olcs-document-share": "dev-release/' . $this->version . '"',
         ];
 
         $composerJson = str_replace(array_keys($replacements), array_values($replacements), $composerJson);
@@ -139,44 +148,5 @@ class Validate
         Shell::out(Git::add(['composer.lock']));
         Shell::out(Git::add(['composer.json']));
         Shell::out(Git::commit('Composer %s', [$this->version]));
-    }
-}
-
-class Command
-{
-    /**
-     * @var Repo
-     */
-    private $repo;
-
-    private $version;
-
-    public function __construct(Repo $repo, $version)
-    {
-        $this->repo = $repo;
-        $this->version = $version;
-    }
-
-    public function run()
-    {
-        Shell::out('Creating release for %s repo', [$this->repo->getName()]);
-
-        chdir($this->repo->getName());
-
-        $this->pushToOrigin();
-
-        chdir('..');
-    }
-
-    private function pushToOrigin()
-    {
-        Shell::out('Pushing release branch to origin');
-
-        Shell::out(Git::push('release/' . $this->version));
-
-        //Shell::out('Pushing develop branch to origin');
-
-        //Shell::out(Git::checkout('develop'));
-        //Shell::out(Git::push('develop'));
     }
 }

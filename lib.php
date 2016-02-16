@@ -5,7 +5,7 @@ class Shell
     public static function exec($cmd, $args = [], $exitOnError = true)
     {
         $command = vsprintf($cmd, $args);
-
+        echo "{$command}\n";
         exec($command, $output, $return);
 
         if ($return != 0 && $exitOnError) {
@@ -17,11 +17,22 @@ class Shell
         return implode("\n", $output);
     }
 
-    public static function out($string, $args = [])
+    public static function out($string, $args = false)
     {
-        echo vsprintf('<--- ' . $string . " --->\n", $args);
+        if (empty($string)) {
+            return;
+        }
+        if (is_array($args)) {
+            echo vsprintf('<--- ' . $string . " --->\n", $args);
+        } else {
+            echo '<--- ' . $string . " --->\n";
+        }
     }
 }
+
+class ModuleRepo extends Repo {}
+class DevRepo extends Repo {}
+class AppRepo extends Repo {}
 
 class Repo
 {
@@ -55,9 +66,9 @@ class Git
 {
     public static function cloneRepo(Repo $repo, $branch = 'develop', $shallow = true)
     {
-        if ($shallow) {
-            return Shell::exec('git clone -b %s --depth 1 %s', [$branch, $repo->getRepo()]);
-        }
+//        if ($shallow) {
+//            return Shell::exec('git clone -b %s --depth 1 %s', [$branch, $repo->getRepo()]);
+//        }
 
         return Shell::exec('git clone -b %s %s', [$branch, $repo->getRepo()]);
     }
@@ -72,9 +83,24 @@ class Git
         return implode("\n", $output);
     }
 
-    public static function commit($message, $args)
+    public static function remove(array $files = [])
+    {
+        $output = [];
+        foreach ($files as $file) {
+                $output[] = Shell::exec('git rm %s', [$file]);
+        }
+
+        return implode("\n", $output);
+    }
+
+    public static function commit($message, $args = [])
     {
         return Shell::exec('git commit -m "%s"', [vsprintf($message, $args)]);
+    }
+
+    public static function fetchAll()
+    {
+        return Shell::exec('git fetch --all');
     }
 
     public static function checkout($branch)
@@ -86,12 +112,41 @@ class Git
     {
         return Shell::exec('git push -u origin %s', [$remoteBranch]);
     }
+
+    public static function pull($remoteBranch)
+    {
+        return Shell::exec('git pull origin %s', [$remoteBranch]);
+    }
+
+    public static function pushTags()
+    {
+        return Shell::exec('git push --tags');
+    }
+
+    public static function deleteRemoteBranch($remoteBranch)
+    {
+        return Shell::exec('git push origin --delete %s', [$remoteBranch]);
+    }
 }
 
 class GitFlow
 {
     public static function releaseStart($version)
     {
+        Git::checkout('develop');
+        Git::pull('develop');
         return Shell::exec('git checkout -b release/%s', [$version]);
+    }
+
+    public static function releaseFinish($version)
+    {
+        Git::checkout('master');
+        Git::pull('master');
+        Shell::exec('git merge release/%s', [$version]);
+        Shell::exec('git tag -a %s -m\'Tagged %s\'', [$version, $version]);
+
+        Git::checkout('develop');
+        Git::pull('develop');
+        Shell::exec('git merge release/%s', [$version]);
     }
 }
