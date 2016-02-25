@@ -18,8 +18,8 @@ $version = $argv[1];
 
 // If we have passed validation, process each repo
 foreach ($repos as $repo) {
-//    $command = new Command($repo, $version);
-//    $command->run();
+    $command = new Command($repo, $version);
+    $command->run();
 }
 
 foreach ($repos as $repo) {
