@@ -21,7 +21,6 @@ $repos = [
     AppRepo::create('olcs-selfserve', $repoTemplate),
     AppRepo::create('olcs-internal', $repoTemplate),
     AppRepo::create('olcs-backend', $repoTemplate),
-    AppRepo::create('olcs-scanning', $repoTemplate),
 
     DevRepo::create('olcs-etl', $repoTemplate),
     DevRepo::create('olcs-elasticsearch', $repoTemplate),
