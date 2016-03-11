@@ -25,6 +25,7 @@ $repos = [
     DevRepo::create('olcs-etl', $repoTemplate),
     DevRepo::create('olcs-elasticsearch', $repoTemplate),
     DevRepo::create('olcs-static', $repoTemplate),
+    DevRepo::create('olcs-templates', $repoTemplate),
 
     // OA repo would need updating before packaging, ie checking ERB files, therefore should be tagged then?
     DevRepo::create('olcs-oa', $repoTemplate),
