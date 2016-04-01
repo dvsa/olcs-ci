@@ -65,9 +65,10 @@ class Command
         Git::checkout('release/'. $this->version);
         Git::pull('release/'. $this->version);
 
-        if ($this->repo instanceof \AppRepo || $this->repo instanceof \DevRepo) {
-            $this->updateVersionNumber();
-        }
+        // This causes merge conflicts!!!
+//        if ($this->repo instanceof \AppRepo || $this->repo instanceof \DevRepo) {
+//            $this->updateVersionNumber();
+//        }
 
         Shell::out(GitFlow::releaseFinish($this->version));
 
