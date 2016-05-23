@@ -96,7 +96,9 @@ class Command
         $this->updateComposerJson();
         Shell::out(Git::add(['composer.json']));
 
-        Shell::out(Git::commit('Update composer for develop'));
+        if (Git::hasUncommittedChanges()) {
+            Shell::out(Git::commit('Update composer for develop'));
+        }
     }
 
     private function updateComposerJson()

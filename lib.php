@@ -127,6 +127,15 @@ class Git
     {
         return Shell::exec('git push origin --delete %s', [$remoteBranch]);
     }
+
+    /**
+     * @return bool
+     */
+    public static function hasUncommittedChanges()
+    {
+        $result = Shell::exec('git diff-index HEAD');
+        return !empty($result);
+    }
 }
 
 class GitFlow
