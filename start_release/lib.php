@@ -85,7 +85,7 @@ class Command
     private function updateVersionNumber()
     {
         Shell::out('Updating application version number');
-        $version = $this->version .'rc';
+        $version = $this->version;
 
         if (file_exists('config/version')) {
             file_put_contents('config/version', $version);
