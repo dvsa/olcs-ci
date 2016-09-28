@@ -2,7 +2,7 @@
 
 include(__DIR__ . '/lib.php');
 
-$repoTemplate = 'git@gitlab.inf.mgt.mtpdvsa:olcs/%s.git';
+$repoTemplate = 'git@repo.shd.ci.nonprod.dvsa.aws:olcs/%s.git';
 
 $repos = [
     // Do these dependencies need adding or could composer.json point at their master
