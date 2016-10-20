@@ -17,6 +17,7 @@ repos=(
   "olcs-selfserve"
 )
 
+echo "Repos : ${repos[*]}"
 echo "Branch : $branch"
 echo
 
@@ -33,7 +34,7 @@ for dir in "${repos[@]}"; do
 
   git checkout -q $branch || exit
 
-  composer update olcs/*
+  ant composer-update-olcs
 
   git add composer.lock
 
