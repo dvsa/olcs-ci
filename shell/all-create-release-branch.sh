@@ -6,12 +6,12 @@ releaseBranch=$1
 # create from branch, this is optional defaults to teh repos default branch
 fromBranch=$2
 
-if [ -e $releaseBranch ]; then
+if [ -z $releaseBranch ]; then
   echo "Release branch not specified eg release/x.y"
   exit
 fi
 
-if [ -e $fromBranch ]; then
+if [ -z $fromBranch ]; then
   echo "Branching repos default"
 fi
 
