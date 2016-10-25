@@ -13,6 +13,8 @@ source config.sh
 echo "Tag : $tag"
 echo
 
+changeLog="";
+
 # Merge release into develop
 ./all-merge-release-into-develop.sh release/$tag || exit
 
@@ -30,27 +32,33 @@ for dir in "${repos[@]}"; do
   # checkout master or exit if for some reason it doesn't exist
   git checkout master || exit
   # merge in the release branch, if errors then assume the release branch does not exist and continue next repo
+  echo "GIT merge origin/$releaseBranch into naster"
   git merge origin/$releaseBranch || continue
 
+  # see if any changes, exlcude composer.json
+  diff=`git diff origin/master --name-only | grep "composer.json" -v`
 
-
-TODO check if changes from master branchm if NO changes then DON'T add the tag
-
-!!! NB release branch will have the release commit, which will make it look different when it shouldn't be !!!!
-
-exit
-
-
-
-
-  diff=`git diff --name-only $previousTag $releaseBranch`
   if [ -n "$diff" ]; then
     # If there are changes then tag the repo
+    echo "GIT tag -a $tag"
     git tag -a $tag -m"Tagged $tag" || exit
 
-    git push origin master
-    git push --tags
+    changeLog="${changeLog}\n${dir} Tagged ${tag}"
+
+    if [ $dryRun = "false" ]; then
+      git push origin master | exit
+      git push --tags | exit
+    fi
+  else
+    echo "No changes, therefore not tagging this repo"
+    changeLog="${changeLog}\n${dir} No changes"
   fi
 
-  git push origin --delete $releaseBranch
+  if [ $dryRun = "false" ]; then
+    echo "GIT delete remote branch $releaseBranch"
+    git push origin --delete $releaseBranch | exit;
+  fi
 done
+
+echo
+echo -e $changeLog

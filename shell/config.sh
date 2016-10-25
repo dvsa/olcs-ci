@@ -32,10 +32,12 @@ repos=(
 gitUri="git@repo.shd.ci.nonprod.dvsa.aws:olcs/"
 #gitUri="git@repo.shd.ci.nonprod.dvsa.aws:evansm/"
 reposDir=./repos
+dryRun=false
 
 echo
 echo "Repos : ${repos[*]}"
 echo "Git URI : $gitUri"
+echo "Dryrun : $dryRun"
 
 # Close all the repos
 cloneAll() {
