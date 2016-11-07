@@ -32,7 +32,7 @@ for dir in "${repos[@]}"; do
   # checkout master or exit if for some reason it doesn't exist
   git checkout master || exit
   # merge in the release branch, if errors then assume the release branch does not exist and continue next repo
-  echo "GIT merge origin/$releaseBranch into naster"
+  echo "GIT merge origin/$releaseBranch into master"
   git merge origin/$releaseBranch || continue
 
   # see if any changes, exlcude composer.json
@@ -48,6 +48,9 @@ for dir in "${repos[@]}"; do
     if [ $dryRun = "false" ]; then
       git push origin master | exit
       git push --tags | exit
+    else
+      echo "DRYRUN - git push origin master"
+      echo "DRYRUN - git push --tags"
     fi
   else
     echo "No changes, therefore not tagging this repo"
@@ -57,6 +60,8 @@ for dir in "${repos[@]}"; do
   if [ $dryRun = "false" ]; then
     echo "GIT delete remote branch $releaseBranch"
     git push origin --delete $releaseBranch | exit;
+  else
+      echo "DRYRUN - git push origin --delete $releaseBranch"
   fi
 done
 

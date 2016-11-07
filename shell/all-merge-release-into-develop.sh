@@ -38,6 +38,10 @@ for dir in "${repos[@]}"; do
 
   git commit -m"Merge $releaseBranch"
 
-  git push || exit 1
+  if [ $dryRun = "false" ]; then
+    git push || exit 1
+  else
+    echo "DRYRUN - git push"
+  fi
 
 done

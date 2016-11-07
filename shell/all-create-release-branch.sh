@@ -12,7 +12,7 @@ if [ -z $releaseBranch ]; then
 fi
 
 if [ -z $fromBranch ]; then
-  echo "Branching repos default"
+  fromBranch=master
 fi
 
 source config.sh
@@ -33,6 +33,8 @@ updateComposerJson() {
     -e 's/"olcs\/olcs-document-share": "dev-[#a-z0-9\/\.]*"/"olcs\/olcs-document-share": "dev-'${releaseBranch/\//\\\/}'"/g' \
     -e 's/"olcs\/olcs-logging": "dev-[#a-z0-9\/\.]*"/"olcs\/olcs-logging": "dev-'${releaseBranch/\//\\\/}'"/g' \
     -e 's/"olcs\/autoload": "dev-[#a-z0-9\/\.]*"/"olcs\/autoload": "dev-'${releaseBranch/\//\\\/}'"/g' \
+    -e 's/"olcs\/olcs-xmltools": "dev-[#a-z0-9\/\.]*"/"olcs\/olcs-xmltools": "dev-'${releaseBranch/\//\\\/}'"/g' \
+    -e 's/"olcs\/companies-house": "dev-[#a-z0-9\/\.]*"/"olcs\/companies-house": "dev-'${releaseBranch/\//\\\/}'"/g' \
     composer.json
 }
 
@@ -64,5 +66,9 @@ for dir in "${repos[@]}"; do
     git commit -m"Update Composer for $releaseBranch"
   fi
 
-  git push origin $releaseBranch || exit
+  if [ $dryRun = "false" ]; then
+    git push origin $releaseBranch || exit
+  else
+    echo "DRYRUN - git push origin $releaseBranch"
+  fi
 done
