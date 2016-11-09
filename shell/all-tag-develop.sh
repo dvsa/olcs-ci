@@ -15,6 +15,7 @@ echo
 
 cloneAll
 
+cd $reposDir
 startPath=`pwd`
 for dir in "${repos[@]}"; do
   echo
@@ -40,12 +41,19 @@ for dir in "${repos[@]}"; do
 
   # add the tag
   git tag -a $tag -m"Tagged $tag" || exit
-  git push --tags
 
   # remove composer.lock
   if [ -f composer.json ]; then
     git rm composer.lock
     git commit -m"Removing lock file after tagging $tag"
+  fi
+
+  if [ $dryRun = "false" ]; then
+    git push
+    git push --tags
+  else
+    echo "DRYRUN - git push"
+    echo "DRYRUN - git push --tags"
   fi
 
 done
