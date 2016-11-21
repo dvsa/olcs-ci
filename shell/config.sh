@@ -32,7 +32,7 @@ repos=(
 gitUri="git@repo.shd.ci.nonprod.dvsa.aws:olcs/"
 #gitUri="git@repo.shd.ci.nonprod.dvsa.aws:evansm/"
 reposDir=./repos
-dryRun=false
+dryRun=true
 
 echo
 echo "Repos : ${repos[*]}"
