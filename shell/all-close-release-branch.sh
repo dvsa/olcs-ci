@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Close release branches and tag all repos"
+
 # tag to create, a release this will expect to find a release branch named "release/X" X = tag
 tag=$1
 
@@ -21,11 +23,11 @@ changeLog="";
 cd $reposDir
 startPath=`pwd`
 for dir in "${repos[@]}"; do
-  echo
-  echo "== $dir =="
-  echo
-
   releaseBranch="release/$tag"
+
+  echo
+  echo "== $dir Merge release branch $releaseBranch into master and then tag =="
+  echo
 
   cd $startPath/$dir
 
