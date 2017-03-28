@@ -25,6 +25,8 @@ for dir in "${repos[@]}"; do
 
   cd $startPath/$dir
 
+  git checkout develop
+
   # Merge but don;t commit
   git merge --no-commit origin/$releaseBranch
 
