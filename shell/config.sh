@@ -11,7 +11,8 @@ repos=(
   "olcs-selfserve"
   "olcs-common"
   "OLCSJourneyTesting"
-  "olcs-reporting"
+# olcs-reporting now independantly version controlled
+#  "olcs-reporting"
   "olcs-oa"
   "olcs-elasticsearch"
   "olcs-auth"
