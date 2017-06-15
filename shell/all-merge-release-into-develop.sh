@@ -28,7 +28,7 @@ for dir in "${repos[@]}"; do
   git checkout develop
 
   # Merge but don;t commit
-  git merge --no-commit origin/$releaseBranch
+  git merge --no-commit origin/$releaseBranch || continue
 
   # Remove the composer.lock if it has been merged in
   if [ -f composer.lock ]; then
