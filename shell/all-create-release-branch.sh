@@ -50,18 +50,18 @@ for dir in "${repos[@]}"; do
   git checkout $fromBranch || exit
   git checkout -b $releaseBranch || exit
 
-  # Remove the composer.lock if it has been merged in
+  # If composer.json exists then has some composer dependencies
   if [ -f composer.json ]; then
+    # update composer.json
+    updateComposerJson
+    git add composer.json
+
     # ONLY update composer lock if branching from develop
     if [ "$fromBranch" = "develop" ]; then
       # update composer.lock
       composer update
       git add composer.lock -f
     fi
-
-    # update composer.json
-    updateComposerJson
-    git add composer.json
 
     git commit -m"Update Composer for $releaseBranch"
   fi
