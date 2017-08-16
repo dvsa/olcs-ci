@@ -48,4 +48,20 @@ for dir in "${repos[@]}"; do
     echo "DRYRUN - git push"
   fi
 
+    # Search for JIRA tickets that have been merged onto develop, but should be on the release branch
+
+    # get list of JIRA tickets on develop that aren't on release branch
+    tickets=$(git log --oneline origin/${releaseBranch}..develop | grep 'OLCS-[0-9]*' -i --only-matching)
+    if [ -n $tickets ]; then
+        # iterate of each ticket
+        while IFS= read -r ticket ; do
+            echo "Looking for '$ticket' in release branch history";
+            # search for the ticket on release branch
+            matches=$(git log origin/$releaseBranch --oneline --grep=${ticket} -i)
+            if [ "$matches" != "" ]; then
+                echo "WARNING JIRA $ticket has a commit in develop that is not in $releaseBranch"
+                echo $matches
+            fi
+        done <<< "$tickets"
+    fi
 done
