@@ -4,7 +4,6 @@ repos=(
   "olcs-xmltools"
   "olcs-logging"
   "olcs-plugins"
-  "olcs-testing"
   "companies-house"
   "olcs-autoload"
   "olcs-testhelpers"
@@ -14,7 +13,6 @@ repos=(
   "olcs-static"
   "olcs-templates"
   "olcs-etl"
-  "olcs-config"
   "olcs-transfer"
   "olcs-utils"
   "olcs-common"
@@ -25,10 +23,6 @@ repos=(
 # olcs-reporting now independantly version controlled
 #  "olcs-reporting"
 )
-#  "olcs-release"
-#  "olcs-ci"
-  #"olcs-txc"
-  #"olcs-devtools"
 
 gitUri="git@repo.shd.ci.nonprod.dvsa.aws:olcs/"
 #gitUri="git@repo.shd.ci.nonprod.dvsa.aws:evansm/"
