@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "Merge all release branches into develop"
 
 releaseBranch=$1
 
 if [ -e $releaseBranch ]; then
   echo "Release branch not specified eg release/x.y"
-  exit
+  exit 1
 fi
 
 source config.sh
@@ -43,7 +45,7 @@ for dir in "${repos[@]}"; do
   git commit -m"Merge $releaseBranch"
 
   if [ $dryRun = "false" ]; then
-    git push || exit 1
+    git push
   else
     echo "DRYRUN - git push"
   fi
