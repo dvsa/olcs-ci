@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "Merge all release branches into develop"
 
 releaseBranch=$1
 
 if [ -e $releaseBranch ]; then
   echo "Release branch not specified eg release/x.y"
-  exit
+  exit 1
 fi
 
 source config.sh
@@ -27,8 +29,11 @@ for dir in "${repos[@]}"; do
 
   git checkout develop
 
-  # Merge but don;t commit
-  git merge --no-commit origin/$releaseBranch || continue
+  # Ignore this repo if the release branch doesn't exist
+  git rev-parse --verify origin/$releaseBranch >/dev/null || continue
+
+  # Merge but don't commit (allow errors as they may be merge conflict's on composer.lock we're about to fix)
+  git merge --no-commit origin/$releaseBranch || true
 
   # Remove the composer.lock if it has been merged in
   if [ -f composer.lock ]; then
@@ -40,10 +45,11 @@ for dir in "${repos[@]}"; do
     git checkout origin composer.json
   fi
 
+  # attempt to commit the merge
   git commit -m"Merge $releaseBranch"
 
   if [ $dryRun = "false" ]; then
-    git push || exit 1
+    git push
   else
     echo "DRYRUN - git push"
   fi
