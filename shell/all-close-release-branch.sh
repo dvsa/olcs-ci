@@ -38,7 +38,9 @@ for dir in "${repos[@]}"; do
 
   # merge in the release branch, if errors then assume the release branch does not exist and continue next repo
   echo "GIT merge origin/$releaseBranch into master"
-  git merge origin/$releaseBranch || continue
+  # Ignore this repo if the release branch doesn't exist
+  git rev-parse --verify origin/$releaseBranch >/dev/null || continue
+  git merge origin/$releaseBranch
 
   # see if any changes, exlcude composer.json
   diff=`git diff origin/master --name-only | grep "composer.json" -v`
