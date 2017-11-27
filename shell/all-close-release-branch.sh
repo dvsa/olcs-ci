@@ -45,6 +45,12 @@ for dir in "${repos[@]}"; do
   # see if any changes, exlcude composer.json
   diff=`git diff origin/master --name-only | grep "composer.json" -v || true`
 
+  if [ $dryRun = "false" ]; then
+    git push
+  else
+    echo "DRYRUN - git push"
+  fi
+
   if [ -n "$diff" ]; then
     # If there are changes then tag the repo
     echo "GIT tag -a $tag"
@@ -53,10 +59,8 @@ for dir in "${repos[@]}"; do
     changeLog="${changeLog}\n${dir} Tagged ${tag}"
 
     if [ $dryRun = "false" ]; then
-      git push origin master
       git push --tags
     else
-      echo "DRYRUN - git push origin master"
       echo "DRYRUN - git push --tags"
     fi
   else
