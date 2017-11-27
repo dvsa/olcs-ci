@@ -43,7 +43,7 @@ for dir in "${repos[@]}"; do
   git merge origin/$releaseBranch
 
   # see if any changes, exlcude composer.json
-  diff=`git diff origin/master --name-only | grep "composer.json" -v`
+  diff=`git diff origin/master --name-only | grep "composer.json" -v || true`
 
   if [ -n "$diff" ]; then
     # If there are changes then tag the repo
