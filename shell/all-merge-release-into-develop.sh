@@ -32,32 +32,31 @@ for dir in "${repos[@]}"; do
   # Ignore this repo if the release branch doesn't exist
   git rev-parse --verify origin/$releaseBranch >/dev/null || continue
 
-  # Merge but don't commit (allow errors as they may be merge conflict's on composer.lock we're about to fix)
-  git merge --no-commit origin/$releaseBranch || true
+  # Do we need to merge?
+  if ! git merge-base --is-ancestor origin/$releaseBranch HEAD ; then
 
-  # Remove the composer.lock if it has been merged in
-  if [ -f composer.lock ]; then
-    git rm composer.lock -f
-  fi
+    # Merge but don't commit or fast-forward, we need to clean up composer files
+    git merge --no-commit --no-ff origin/$releaseBranch || true
 
-  # Restore composer.json to how it should be
-  if [ -f composer.json ]; then
-    git checkout origin composer.json
-  fi
+    # Remove the composer.lock if it has been merged in
+    if [ -f composer.lock ]; then
+      git rm composer.lock -f
+    fi
 
-  if git diff-index --quiet HEAD ; then
-    # no changes, so abort merge (if one is in progress)
-    git merge --abort || true
-  else
-    # commit if there are any changes
+    # Restore composer.json to how it should be
+    if [ -f composer.json ]; then
+      git checkout origin composer.json
+    fi
+
     git commit -m"Merge $releaseBranch"
+
+    if [ $dryRun = "false" ]; then
+      git push
+    else
+      echo "DRYRUN - git push"
+    fi
   fi
 
-  if [ $dryRun = "false" ]; then
-    git push
-  else
-    echo "DRYRUN - git push"
-  fi
 
   # Search for JIRA tickets that have been merged onto develop, but should be on the release branch
 
