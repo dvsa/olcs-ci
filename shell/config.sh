@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 repos=(
   "olcs-xmltools"
   "olcs-logging"
