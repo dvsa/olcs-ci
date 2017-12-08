@@ -61,7 +61,7 @@ for dir in "${repos[@]}"; do
   # Search for JIRA tickets that have been merged onto develop, but should be on the release branch
 
   # get list of JIRA tickets on develop that aren't on release branch
-  tickets=$(git log --oneline origin/${releaseBranch}..develop | grep 'OLCS-[0-9]*' -i --only-matching|| true)
+  tickets=$(git log --oneline origin/${releaseBranch}..develop | grep 'OLCS-[0-9]\+' -i --only-matching|| true)
 
   if [ "$tickets" != "" ]; then
     # iterate of each ticket
