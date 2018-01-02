@@ -1,0 +1,16 @@
+version: '2'
+services:
+  git-1.7:
+    build: dockerfiles/git-1.7 # this version of git gets used on CI server
+    network_mode: host
+    volumes:
+      - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
+      - /olcs-ci/shell/repos # mount a volume in which to clone the repos
+      - ~/.ssh/:/root/.ssh:ro # make git keys available
+  git-2.14:
+    build: dockerfiles/git-2.14 # more recent version of git likely to be found on dev's machines
+    network_mode: host
+    volumes:
+      - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
+      - /olcs-ci/shell/repos # mount a volume in which to clone the repos
+      - ~/.ssh/:/root/.ssh:ro # make git keys available
