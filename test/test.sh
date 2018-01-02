@@ -34,6 +34,7 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
     echo "running dry-run test for ${VERSION_SERVICE_NAME}"
     docker-compose run --rm -w /olcs-ci/shell "${VERSION_SERVICE_NAME}" bash -c '
         set -e
+        export OLCS_CI_GIT_URI=/origin/
         export OLCS_CI_REPOS=olcs-backend
         ./all-create-release-branch.sh release/1.23
     '
@@ -47,6 +48,27 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
             false
         else
             echo Test passed!
+        fi
+      '
+
+    echo "running live-run test for ${VERSION_SERVICE_NAME}"
+    docker-compose run --rm -w /olcs-ci/shell "${VERSION_SERVICE_NAME}" bash -c '
+        set -e
+        export OLCS_CI_GIT_URI=/origin/
+        export OLCS_CI_REPOS=olcs-backend
+        export OLCS_CI_DRY_RUN=false
+        ./all-create-release-branch.sh release/1.23
+    '
+
+    echo
+    echo "checking result for ${VERSION_SERVICE_NAME}"
+    docker-compose run --rm git-2.14 bash -c '
+        set -e
+        if git -C /origin/olcs-backend.git rev-parse --verify release/1.23 &> /dev/null ; then
+            echo Test passed!
+        else
+            echo Test failed, brach was not found, should have been pushed
+            false
         fi
       '
 done

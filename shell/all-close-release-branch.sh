@@ -45,7 +45,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
   # see if any changes, exlcude composer.json
   diff=`git diff origin/master --name-only | grep "composer.json" -v || true`
 
-  if [ $dryRun = "false" ]; then
+  if [ $OLCS_CI_DRY_RUN = "false" ]; then
     git push
   else
     echo "DRYRUN - git push"
@@ -58,7 +58,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
 
     changeLog="${changeLog}\n${dir} Tagged ${tag}"
 
-    if [ $dryRun = "false" ]; then
+    if [ $OLCS_CI_DRY_RUN = "false" ]; then
       git push --tags
     else
       echo "DRYRUN - git push --tags"
@@ -68,7 +68,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
     changeLog="${changeLog}\n${dir} No changes"
   fi
 
-  if [ $dryRun = "false" ]; then
+  if [ $OLCS_CI_DRY_RUN = "false" ]; then
     echo "GIT delete remote branch $releaseBranch"
     git push origin --delete $releaseBranch
   else

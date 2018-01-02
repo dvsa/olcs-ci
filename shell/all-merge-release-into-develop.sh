@@ -50,7 +50,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
 
     git commit -m"Merge $releaseBranch"
 
-    if [ $dryRun = "false" ]; then
+    if [ $OLCS_CI_DRY_RUN = "false" ]; then
       git push
     else
       echo "DRYRUN - git push"

@@ -33,11 +33,15 @@ if [[ -z ${OLCS_CI_GIT_URI+x} ]] ; then
 fi
 reposDir=./repos
 dryRun=true
+if [[ -z ${OLCS_CI_DRY_RUN+x} ]] ; then
+    OLCS_CI_DRY_RUN=$dryRun
+fi
+unset dryRun # prevent other scripts from using deprecated dryRun variable (jenkins still sets it with sed)
 
 echo
 echo "Repos : ${OLCS_CI_REPOS[*]}"
 echo "Git URI : $OLCS_CI_GIT_URI"
-echo "Dryrun : $dryRun"
+echo "Dryrun : $OLCS_CI_DRY_RUN"
 
 # Close all the repos
 cloneAll() {

@@ -48,7 +48,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
     git commit -m"Removing lock file after tagging $tag"
   fi
 
-  if [ $dryRun = "false" ]; then
+  if [ $OLCS_CI_DRY_RUN = "false" ]; then
     git push
     git push --tags
   else

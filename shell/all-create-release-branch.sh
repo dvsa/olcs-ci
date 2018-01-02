@@ -66,7 +66,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
     git commit -m"Update Composer for $releaseBranch"
   fi
 
-  if [ $dryRun = "false" ]; then
+  if [ $OLCS_CI_DRY_RUN = "false" ]; then
     git push origin $releaseBranch || exit
   else
     echo "DRYRUN - git push origin $releaseBranch"

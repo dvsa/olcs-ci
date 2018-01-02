@@ -40,7 +40,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
 
   git commit -m'Update olcs/* dependencies'
 
-  if [ $dryRun = "false" ]; then
+  if [ $OLCS_CI_DRY_RUN = "false" ]; then
     git push || exit 1
   else
     echo "DRYRUN - git push"

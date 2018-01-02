@@ -7,8 +7,6 @@ services:
       - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
       - /olcs-ci/shell/repos # mount a volume in which to clone the repos
       - origin:/origin # fake origin location
-    environment:
-      OLCS_CI_GIT_URI: /origin/
 
   git-2.14:
     build: dockerfiles/git-2.14 # more recent version of git likely to be found on dev's machines
@@ -17,8 +15,6 @@ services:
       - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
       - /olcs-ci/shell/repos # mount a volume in which to clone the repos
       - origin:/origin # fake origin location
-    environment:
-      OLCS_CI_GIT_URI: /origin/
 
 volumes:
   origin: {}
