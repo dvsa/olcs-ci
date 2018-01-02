@@ -40,7 +40,7 @@ updateComposerJson() {
 
 cd $reposDir
 startPath=`pwd`
-for dir in "${repos[@]}"; do
+for dir in "${OLCS_CI_REPOS[@]}"; do
   echo
   echo "== $dir =="
   echo

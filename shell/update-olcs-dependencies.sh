@@ -11,13 +11,13 @@ fi
 source config.sh
 
 # Override repos as we only need these three
-repos=(
+OLCS_CI_REPOS=(
   "olcs-backend"
   "olcs-internal"
   "olcs-selfserve"
 )
 
-echo "Repos : ${repos[*]}"
+echo "Repos : ${OLCS_CI_REPOS[*]}"
 echo "Branch : $branch"
 echo
 
@@ -25,7 +25,7 @@ cloneAll
 
 cd $reposDir
 startPath=`pwd`
-for dir in "${repos[@]}"; do
+for dir in "${OLCS_CI_REPOS[@]}"; do
   echo
   echo "== $dir =="
   echo

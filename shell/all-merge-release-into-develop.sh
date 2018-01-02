@@ -20,7 +20,7 @@ cloneAll
 
 cd $reposDir
 startPath=`pwd`
-for dir in "${repos[@]}"; do
+for dir in "${OLCS_CI_REPOS[@]}"; do
   echo
   echo "== $dir Merge release branch $releaseBranch into develop =="
   echo
