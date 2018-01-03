@@ -29,7 +29,7 @@ if [[ -z ${OLCS_CI_REPOS+x} ]] ; then
 fi
 
 if [[ -z ${OLCS_CI_GIT_URI+x} ]] ; then
-    OLCS_CI_GIT_URI="git@repo.shd.ci.nonprod.dvsa.aws:evansm/"
+    OLCS_CI_GIT_URI="git@repo.shd.ci.nonprod.dvsa.aws:olcs/"
 fi
 reposDir=./repos
 dryRun=true
