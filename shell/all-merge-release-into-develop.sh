@@ -20,7 +20,7 @@ cloneAll
 
 cd $reposDir
 startPath=`pwd`
-for dir in "${repos[@]}"; do
+for dir in "${OLCS_CI_REPOS[@]}"; do
   echo
   echo "== $dir Merge release branch $releaseBranch into develop =="
   echo
@@ -33,7 +33,8 @@ for dir in "${repos[@]}"; do
   git rev-parse --verify origin/$releaseBranch >/dev/null || continue
 
   # Do we need to merge?
-  if ! git merge-base --is-ancestor origin/$releaseBranch HEAD ; then
+
+  if [ "$(git rev-parse --verify origin/$releaseBranch)" != "$(git merge-base origin/$releaseBranch HEAD)" ] ; then
 
     # Merge but don't commit or fast-forward, we need to clean up composer files
     git merge --no-commit --no-ff origin/$releaseBranch || true
@@ -50,7 +51,7 @@ for dir in "${repos[@]}"; do
 
     git commit -m"Merge $releaseBranch"
 
-    if [ $dryRun = "false" ]; then
+    if [ $OLCS_CI_DRY_RUN = "false" ]; then
       git push
     else
       echo "DRYRUN - git push"
