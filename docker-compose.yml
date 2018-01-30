@@ -1,15 +1,15 @@
 version: '2'
 services:
-  git-1.7:
-    build: dockerfiles/git-1.7 # this version of git gets used on CI server
+  git-ci-legacy:
+    build: dockerfiles/git-ci-legacy
     network_mode: none # deny access to actual git repositories
     volumes:
       - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
       - /olcs-ci/shell/repos # mount a volume in which to clone the repos
       - origin:/origin # fake origin location
 
-  git-2.14:
-    build: dockerfiles/git-2.14 # more recent version of git likely to be found on dev's machines
+  git-recent:
+    build: dockerfiles/git-recent
     network_mode: none # deny access to actual git repositories
     volumes:
       - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only

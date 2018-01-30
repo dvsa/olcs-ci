@@ -7,13 +7,13 @@ cd ..
 export COMPOSE_PROJECT_NAME=ci_test_`pwd | shasum`
 
 function cleanup {
-    docker-compose down --volumes
+    docker-compose down --volumes --remove-orphans
 }
 trap cleanup EXIT
 
 docker-compose build
 
-VERSION_SERVICE_NAMES=(git-1.7 git-2.14)
+VERSION_SERVICE_NAMES=(git-ci-legacy git-recent)
 
 for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
     echo
@@ -44,7 +44,7 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
 
     echo
     echo "checking result for ${VERSION_SERVICE_NAME}"
-    docker-compose run --rm git-2.14 bash -c '
+    docker-compose run --rm git-recent bash -c '
         set -e
         if git -C /origin/olcs-backend.git rev-parse --verify release/1.23 &> /dev/null ; then
             echo Test failed, branch was found, should not have been pushed in dry-run
@@ -65,7 +65,7 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
 
     echo
     echo "checking result for ${VERSION_SERVICE_NAME}"
-    docker-compose run --rm git-2.14 bash -c '
+    docker-compose run --rm git-recent bash -c '
         set -e
         if git -C /origin/olcs-backend.git rev-parse --verify release/1.23 &> /dev/null ; then
             echo Test passed!
@@ -85,7 +85,7 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
 
     echo
     echo "checking result for ${VERSION_SERVICE_NAME}"
-    docker-compose run --rm git-2.14 bash -c '
+    docker-compose run --rm git-recent bash -c '
         set -e
         if git -C /origin/olcs-backend.git rev-parse --verify release/1.23 &> /dev/null ; then
             echo Test passed!
@@ -106,7 +106,7 @@ for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
 
     echo
     echo "checking result for ${VERSION_SERVICE_NAME}"
-    docker-compose run --rm git-2.14 bash -c '
+    docker-compose run --rm git-recent bash -c '
         set -e
         if git -C /origin/olcs-backend.git rev-parse --verify release/1.23 &> /dev/null ; then
             echo Test failed, branch was found, should have been removed
