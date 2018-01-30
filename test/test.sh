@@ -3,15 +3,15 @@ set -e
 cd `dirname $0`
 cd ..
 
+#create a custom prefix for images so we don't clash with other ci runs
+export COMPOSE_PROJECT_NAME=ci_test_`pwd | shasum`
+
 function cleanup {
     docker-compose down --volumes
 }
 trap cleanup EXIT
 
 cleanup
-
-#create a custom prefix for images so we don't clash with other ci runs
-export COMPOSE_PROJECT_NAME=ci_test_`pwd | shasum`
 
 docker-compose build
 
