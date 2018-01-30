@@ -11,8 +11,6 @@ function cleanup {
 }
 trap cleanup EXIT
 
-cleanup
-
 docker-compose build
 
 VERSION_SERVICE_NAMES=(git-1.7 git-2.14)
