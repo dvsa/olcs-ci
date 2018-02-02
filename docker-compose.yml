@@ -8,6 +8,14 @@ services:
       - /olcs-ci/shell/repos # mount a volume in which to clone the repos
       - origin:/origin # fake origin location
 
+  git-ci-new:
+    build: dockerfiles/git-ci-new
+    network_mode: none # deny access to actual git repositories
+    volumes:
+      - .:/olcs-ci:ro # mount everything in this dir - :ro = read-only
+      - /olcs-ci/shell/repos # mount a volume in which to clone the repos
+      - origin:/origin # fake origin location
+
   git-recent:
     build: dockerfiles/git-recent
     network_mode: none # deny access to actual git repositories
