@@ -13,7 +13,7 @@ trap cleanup EXIT
 
 docker-compose build
 
-VERSION_SERVICE_NAMES=(git-ci-legacy git-recent)
+VERSION_SERVICE_NAMES=(git-ci-legacy git-ci-new git-recent)
 
 for VERSION_SERVICE_NAME in "${VERSION_SERVICE_NAMES[@]}"; do
     echo
