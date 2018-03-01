@@ -10,7 +10,6 @@ secretsDir=`pwd`/git-secrets
 reposDir=./repos
 
 export PATH=$PATH:$secretsDir
-echo $PATH
 
 if [[ -z ${OLCS_CI_GIT_URI+x} ]] ; then
     OLCS_CI_GIT_URI="git@repo.shd.ci.nonprod.dvsa.aws:"
