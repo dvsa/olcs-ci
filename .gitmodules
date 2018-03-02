@@ -1,0 +1,3 @@
+[submodule "git-secrets"]
+	path = git-secrets
+	url = ../git-secrets.git
