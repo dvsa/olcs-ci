@@ -77,4 +77,4 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
 done
 
 echo
-echo -e $changeLog
+echo -e $changeLog > env.properties
