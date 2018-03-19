@@ -56,7 +56,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
     echo "GIT tag -a $tag"
     git tag -a $tag -m"Tagged $tag"
 
-    changeLog="${changeLog}\n${dir} Tagged ${tag}"
+    changeLog="${changeLog}\n${dir}=${tag}"
 
     if [ $OLCS_CI_DRY_RUN = "false" ]; then
       git push --tags
@@ -65,7 +65,7 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
     fi
   else
     echo "No changes, therefore not tagging this repo"
-    changeLog="${changeLog}\n${dir} No changes"
+    changeLog="${changeLog}\n${dir}=NOCHANGE"
   fi
 
   if [ $OLCS_CI_DRY_RUN = "false" ]; then
