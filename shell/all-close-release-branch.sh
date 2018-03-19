@@ -78,3 +78,7 @@ done
 
 echo
 echo -e $changeLog > env.properties
+
+pwd
+
+ls -l
