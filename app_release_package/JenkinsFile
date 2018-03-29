@@ -1,0 +1,220 @@
+/*
+ * Common packages we need access to
+ */
+import hudson.AbortException
+import hudson.console.HyperlinkNote
+import java.util.concurrent.CancellationException
+import org.jvnet.jenkins.plugins.nodelabelparameter.*
+
+
+/**** BEGIN PIPELINE STAGES ****/
+node('master') {
+
+    def VERSION = params.VERSION
+    def GitRepo = 'git@repo.shd.ci.nonprod.dvsa.aws:'
+    def defaultS3Bucket = 'devapp-olcs-pri-olcs-deploy-s3/'
+    def templateS3Bucket = 'devapp-shd-pri-file-deploy-s3/'
+    def ldifLabel = 'olcs-dir-ldif-version'
+    def txcLabel = 'olcs-transxchange-version'
+    def txcFile = 'txc'
+    def authLabel = 'olcs_auth_version'
+    def authFile = 'openam'
+    def appVersionFile = ''
+
+    // [0]: name of variable in hiera
+    // [1]: name of repo
+    // [2]: S3 Location for artefact
+    // [3]: name of S3 artifact (minus [version].tar.gz)
+    // [4]: name of Build Job to create artefact
+    // [5]: populated by scripts: current tag version (master)
+    def repos = [
+            ['olcs-ssweb-version', 'olcs/olcs-selfserve', defaultS3Bucket + 'selfserve/', 'olcs-selfserve-', 'Build_Selfserve'],
+            ['olcs-static-version', 'olcs/olcs-static', defaultS3Bucket + 'staticcontent/', 'olcs-static-', 'Build_Static'],
+            ['olcs-iuweb-version', 'olcs/olcs-internal', defaultS3Bucket + 'internal/', 'olcs-internal-', 'Build_Internal'],
+            ['olcs-api-version', 'olcs/olcs-backend', defaultS3Bucket + 'api/', 'olcs-backend-', 'Build_Backend'],
+            ['olcs-search-version', 'olcs/olcs-elasticsearch', defaultS3Bucket + 'search/elasticv5/', 'olcs-elasticsearch-', 'Build_Elastic'],
+            ['olcs-address-base-version', 'sc/address-base', defaultS3Bucket + 'addressbase/', 'address-scripts-', 'Build_Address_Base'],
+            ['olcs-address-service-version', 'sc/address-service', defaultS3Bucket + 'addressbase/', 'address-service-', 'Build_Address_Service'],
+            ['olcs_dir_version', 'olcs/olcs-oa', defaultS3Bucket + 'opendj/', 'opendj-', 'Build_OpenDJ'],
+            ['olcs_etl_version', 'olcs/olcs-etl', defaultS3Bucket + 'api/', 'olcs-etl-', 'Build_ETL'],
+            ['olcs_templates_version', 'olcs/olcs-templates', templateS3Bucket, 'olcs-templates-', 'Build_Templates']
+    ]
+
+    stageName = "App Branch Close and Tag (not currently integrated)"
+    stage(stageName) {
+        //build job: 'Release_Branch_Close_Clone', parameters: [
+        //        [$class: 'StringParameterValue', name: 'VERSION', value: params.VERSION],
+        //        [$class: 'BooleanParameterValue', name: 'DRYRUN', value: params.DRYRUN]
+
+        //]
+    }
+
+    stageName = 'Get Repos'
+    stage(stageName) {
+
+        //deleteDir()
+
+        for (int i = 0; i < repos.size; i++) {
+            dir(repos[i][0]) {
+                checkout([$class                           : 'GitSCM', branches: [[name: 'refs/heads/master']],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions                       : [],
+                          submoduleCfg                     : [],
+                          userRemoteConfigs                : [[credentialsId: 'OLCS-Jenkins', url: GitRepo + repos[i][1] + '.git']]
+                ])
+
+                sh 'git describe --abbrev=0 --tags > result'
+                def version = readFile('result').trim()
+                repos[i] += version //Add version as repos[i][5]
+            }
+
+        }
+    }
+
+    stageName = "Get App Release Tags"
+    stage(stageName) {
+        for (int i = 0; i < repos.size; i++) {
+            if (repos[i][0].contains('address')) {
+                if (repos[i][5].equalsIgnoreCase(repos[i + 1][5])) {
+                    appVersionFile += "olcs-address-version: '" + repos[i][5] + "'\n"
+                    i += 1 //don't run again for second address var
+                } else {
+                    appVersionFile += "olcs-address-version: '" + repos[i + 1][5] + "'\n"
+                    i += 1
+                    print '**** PROBLEM WITH ADDRESS TAGS****'
+                }
+            } else {
+
+                appVersionFile += repos[i][0] + ": '" + repos[i][5] + "'\n"
+            }
+        }
+
+        // Add Special Cases -
+        // Ldif which is (api version -1)
+        dir('olcs-api-version') {
+            sh 'git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` > result'
+            def version = readFile('result').trim()
+            appVersionFile += ldifLabel + " : '" + version + "'\n"
+        }
+
+        //tcx read from input params
+        appVersionFile += txcLabel + " : '" + params.olcs_transxchange_version + "'\n"
+
+        //auth from input params
+        appVersionFile += authLabel + " : '" + params.olcs_auth_version + "'\n"
+
+        print appVersionFile
+    }
+
+
+    stageName = "Check and Build Release Artefacts"
+    stage(stageName) {
+        def message = ''
+    for (int i = 0; i < repos.size; i++) {
+
+        // Jenkins sh doesn't like pipes so splitting into two commands
+        def cmd = 's3cmd ls s3://' + repos[i][2] + ' > result'
+        sh "${cmd}"
+        print readFile('result').trim()
+        def cmd2 = 'grep ' + repos[i][3] + repos[i][5] + '.tar.gz result > result2 || true'
+        sh "${cmd2}"
+        def file = readFile('result2').trim()
+        print 'File: ' + file
+        if (file.contains(repos[i][3] + repos[i][5])) {
+            message += 'Exists: ' + repos[i][3] + repos[i][5] + '\n'
+        } else {
+            if (params.DRYRUN) {
+                message += 'MISSING: ' + repos[i][3] + repos[i][5] + '\n'
+            } else {
+                message += 'Creating: ' + repos[i][3] + repos[i][5] + '\n'
+
+                build job: repos[i][4], parameters: [
+                    [$class: 'StringParameterValue', name: 'TAG', value: repos[i][5]],
+                    [$class: 'StringParameterValue', name: 'TAR_SUFFIX', value: repos[i][5]]]
+                print "Built ${repos[i][3]} ${repos[i][4]} with ${repos[i][5]} \n"
+
+            }
+        }
+        print "Completed " + repos[i][0]
+    }
+    print message
+}
+
+    stageName = "Check Artefacts from Input Params"
+    stage(stageName) {
+        def message = ''
+
+        // Jenkins sh doesn't like pipes so splitting into two commands
+        def cmd = 's3cmd ls s3://' + defaultS3Bucket + 'openam/ > result'
+        sh "${cmd}"
+        print readFile('result').trim()
+        def cmd2 = 'grep ' + authFile + '-' + params.olcs_auth_version + '.tar.gz result > result2 || true'
+        sh "${cmd2}"
+        def file = readFile('result2').trim()
+        print 'File: ' + file
+        if (file.contains(authFile + '-' + params.olcs_auth_version)) {
+            message += 'Exists: ' + authFile + '-' + params.olcs_auth_version + '\n'
+        } else {
+            if (params.DRYRUN) {
+                message += 'MISSING: ' + authFile + '-' + params.olcs_auth_version + '\n'
+            } else {
+                message += 'MISSING: ' + authFile + '-' + params.olcs_auth_version + '\n'
+                error('Missing package:\n' + message)
+            }
+        }
+
+        // Jenkins sh doesn't like pipes so splitting into two commands
+        def cmd3 = 's3cmd ls s3://' + defaultS3Bucket + 'api/ > result'
+        sh "${cmd3}"
+        print readFile('result').trim()
+        def cmd4 = 'grep ' + txcFile + '-' + params.olcs_transxchange_version + '.war result > result2 || true'
+        sh "${cmd4}"
+        def file2 = readFile('result2').trim()
+        print 'File: ' + file2
+        if (file2.contains(txcFile + '-' + params.olcs_transxchange_version)) {
+            message += 'Exists: ' + txcFile + '-' + params.olcs_transxchange_version + '\n'
+        } else {
+            if (params.DRYRUN) {
+                message += 'MISSING: ' + txcFile + '-' + params.olcs_transxchange_version + '\n'
+            } else {
+                message += 'MISSING: ' + txcFile + '-' + params.olcs_transxchange_version + '\n'
+                error('Missing package:\n' + message)
+            }
+        }
+
+        print message
+    }
+
+    stageName = "Check App Version against Built artefacts"
+    stage(stageName) {
+        build job: 'Check App Release Tags', parameters: [
+                [$class: 'StringParameterValue', name: 'olcs_transxchange_version', value: params.olcs_transxchange_version],
+                [$class: 'StringParameterValue', name: 'olcs_auth_version', value: params.olcs_auth_version]
+        ]
+    }
+
+
+    stageName = "Create and Push Release Manifest"
+    stage(stageName) {
+        if (params.DRYRUN) {
+            print appVersionFile
+        } else {
+            dir('app-version') {
+                deleteDir()
+                checkout([$class                           : 'GitSCM', branches: [[name: 'refs/heads/develop']],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions                       : [],
+                          submoduleCfg                     : [],
+                          userRemoteConfigs                : [[credentialsId: 'OLCS-Jenkins', url: 'git@repo.shd.ci.nonprod.dvsa.aws:aws/app-version.git']]
+                ])
+                sh 'ls -lrt'
+                sh 'git checkout -b release-candidate'
+                writeFile file: 'hiera/app_version.eyaml', text: "${appVersionFile}"
+                sh 'git status'
+                sh 'git add hiera/app_version.eyaml'
+                sh "git commit -m \"Release ${VERSION}\""
+                sh "git push --set-upstream origin release-candidate"
+            }
+        }
+    }
+}
