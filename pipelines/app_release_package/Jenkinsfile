@@ -52,7 +52,7 @@ node('master') {
     stageName = 'Get Repos'
     stage(stageName) {
 
-        //deleteDir()
+        deleteDir()
 
         for (int i = 0; i < repos.size; i++) {
             dir(repos[i][0]) {
@@ -187,10 +187,15 @@ node('master') {
 
     stageName = "Check App Version against Built artefacts"
     stage(stageName) {
-        build job: 'Check App Release Tags', parameters: [
-                [$class: 'StringParameterValue', name: 'olcs_transxchange_version', value: params.olcs_transxchange_version],
-                [$class: 'StringParameterValue', name: 'olcs_auth_version', value: params.olcs_auth_version]
-        ]
+        if (params.DRYRUN) {
+            print 'Not Running external check for DryRun'
+        } else {
+
+            build job: 'Check App Release Tags', parameters: [
+                    [$class: 'StringParameterValue', name: 'olcs_transxchange_version', value: params.olcs_transxchange_version],
+                    [$class: 'StringParameterValue', name: 'olcs_auth_version', value: params.olcs_auth_version]
+            ]
+        }
     }
 
 
