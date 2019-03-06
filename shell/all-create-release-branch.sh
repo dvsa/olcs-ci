@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+git#!/usr/bin/env bash
 
 # release branch to create
 releaseBranch=$1
 
 # create from branch, this is optional defaults to teh repos default branch
 fromBranch=$2
-
+x§§
 if [ -z $releaseBranch ]; then
   echo "Release branch not specified eg release/x.y"
   exit

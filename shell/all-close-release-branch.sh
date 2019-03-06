@@ -75,6 +75,6 @@ for dir in "${OLCS_CI_REPOS[@]}"; do
       echo "DRYRUN - git push origin --delete $releaseBranch"
   fi
 done
-
+t
 echo
 echo -e $changeLog
