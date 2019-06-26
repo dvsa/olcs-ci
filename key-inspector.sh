@@ -56,7 +56,9 @@ case $1 in
       "olcs/olcs-selfserve"
       "olcs/olcs-release-notes"
       "sc/address-base"
-      "sc/address-service"
+      "sc/address-service",
+      "olcs/VOLPerformanceTest",
+      "olcs/vol-functional-tests"
     )  
     ;;
   INFRA)
